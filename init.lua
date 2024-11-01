@@ -828,8 +828,9 @@ require('lazy').setup({
     'ellisonleao/gruvbox.nvim',
     priority = 1000,
     config = true,
-    opts = ...,
-    contrast = hard,
+    opts = {
+      transparent_mode = true,
+    },
   },
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
@@ -838,11 +839,14 @@ require('lazy').setup({
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
     'folke/tokyonight.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
+    opts = {
+      transparent = vim.g.transparent_enabled,
+    },
     init = function()
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'gruvbox'
+      vim.cmd.colorscheme 'tokyonight-night'
 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
@@ -913,11 +917,19 @@ require('lazy').setup({
     --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
-
+  -- Elias added plugins go below down here
   {
     'ThePrimeagen/vim-be-good',
   },
-
+  {
+    'xiyaowong/transparent.nvim',
+  },
+  {
+    'm4xshen/autoclose.nvim',
+    config = function()
+      require('autoclose').setup()
+    end,
+  },
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
@@ -987,5 +999,9 @@ vim.api.nvim_create_user_command('TermHere', function()
     print 'No file is currently being edited.'
   end
 end, {})
+
+-- Keybinding to toggle transparency using transparent.nvim
+vim.keymap.set('n', '<leader>tt', ':TransparentToggle<CR>', { desc = 'Toggle Transparency' })
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
