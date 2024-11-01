@@ -100,6 +100,7 @@ vim.g.have_nerd_font = false
 
 -- Make line numbers default
 vim.opt.number = true
+vim.opt.relativenumber = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
 -- vim.opt.relativenumber = true
@@ -607,7 +608,7 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        -- pyright = {},
+        pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -823,7 +824,13 @@ require('lazy').setup({
       }
     end,
   },
-
+  {
+    'ellisonleao/gruvbox.nvim',
+    priority = 1000,
+    config = true,
+    opts = ...,
+    contrast = hard,
+  },
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
@@ -835,13 +842,12 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+      vim.cmd.colorscheme 'gruvbox'
 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
     end,
   },
-
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
@@ -908,6 +914,10 @@ require('lazy').setup({
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
 
+  {
+    'ThePrimeagen/vim-be-good',
+  },
+
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
@@ -952,5 +962,30 @@ require('lazy').setup({
   },
 })
 
+-- (Elias 28.10.2024): this code was added so that i can use python in neovim
+-- vim.g.python3_host_prog = 'C:\\Users\\elias\\AppData\\Local\\Programs\\Python\\Python311\\python.exe'
+
+-- differentiate between Linux and Windows variable paths
+if vim.loop.os_uname().sysname == 'Windows_NT' then
+  -- Windows path
+  vim.g.python3_host_prog = 'C:/Users/elias/AppData/Local/Programs/Python/Python311/python.exe'
+else
+  -- Linux path
+  vim.g.python3_host_prog = '/usr/bin/python3' -- Adjust this to your Linux Python path
+end
+
+-- Create a custom command to open a terminal in the current file's directory
+-- NOTE: this was created by ChatGPT
+vim.api.nvim_create_user_command('TermHere', function()
+  local current_file_dir = vim.fn.expand '%:p:h'
+  if current_file_dir ~= '' then
+    -- Change to the current file's directory
+    vim.cmd('lcd ' .. current_file_dir)
+    -- Open the terminal
+    vim.cmd 'terminal'
+  else
+    print 'No file is currently being edited.'
+  end
+end, {})
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
